@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"time"
+
+	"github.com/ilyakaznacheev/cleanenv"
 )
 
 type Config struct {
@@ -18,10 +20,23 @@ type HTTPServer struct {
 	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"60s"`
 }
 
-func MustLoad() {
+func MustLoad() *Config {
 	configPath := os.Getenv("CONFIG_PATH")
 	if configPath == "" {
 		log.Fatal("CONFIG_PATH is required")
 	}
 
+	// Check if the file exists
+	if _, err := os.Stat(configPath); os.IsNotExist(err) {
+		log.Fatalf("Config file not found: %s", configPath)
+	}
+
+	// Load the config file
+	var cfg Config
+
+	if err := cleanenv.ReadConfig(configPath, &cfg); err != nil {
+		log.Fatalf("Failed to load config: %v", err)
+	}
+
+	return &cfg
 }

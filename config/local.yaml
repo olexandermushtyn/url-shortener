@@ -1,5 +1,5 @@
 env: 'local' # local, dev, prod etc.
-storage_path: './storage/storage.db'
+storage_path: './storage/sqlite/storage.db'
 http:
   address: 'localhost:8082'
   timeout: 4s
